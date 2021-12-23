@@ -1,0 +1,5 @@
+releases:
+  - name: my-app
+    chart: microservice
+    values: 
+      - my-app-values.yaml

@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: go-app
+  template:
+    metadata:
+      labels:
+        name: go-app
+    spec:
+      containers:
+      - name: service
+        image: tonopy/go-app:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 8080
+
+        readinessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 8080
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        env:
+        - name: SERVER_PORT
+          value: "8080" 
+     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app
+spec:
+  type: ClusterIP
+  selector:
+    app: go-app
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
